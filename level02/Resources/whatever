@@ -1,0 +1,26 @@
+скачаем файл level02.pcap
+scp -P 2222 level02@127.0.0.1:~/level02.pcap shared/level02.pcap
+
+разрешим доступ к файлу chmod 777 level02.pcap
+
+запустим в kali linux программу wireshark для анализа telnet пакетов
+
+откроем файл level02.pcap
+
+выведем содержимое пакетов: Analyse->Follow->TCP Strteam
+
+видим строку: Password: ft_wandr...NDRel.L0L
+
+Символы точки - это неотображаемые символы ascii
+
+откроем hex-dump
+
+точки - это символ 7f - команда удаления символа:
+пароль - ft_waNDReL0L
+
+level02@SnowCrash:~$ su flag02
+Password: ft_waNDReL0L
+Don't forget to launch getflag !
+flag02@SnowCrash:~$ getflag
+Check flag.Here is your token : kooda2puivaav1idi4f57q8iq
+

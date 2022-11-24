@@ -1,0 +1,28 @@
+Найдём файлы, принадлежащие flag00.
+Мы можем перенаправить ошибки в /dev/null, чтобы не загромождать вывод.
+
+level00@SnowCrash:~$ find / -user flag00 2>/dev/null
+/usr/sbin/john
+/rofs/usr/sbin/john
+
+Найдено 2 файла посмотрим их
+
+level00@SnowCrash:~$ cat /rofs/usr/sbin/john
+cdiiddwpgswtgt
+level00@SnowCrash:~$ cat /usr/sbin/john
+cdiiddwpgswtgt
+
+в каждом из них лежит код, но этот код не подходит - он зашифрован
+
+попробуем расшифровать его алгоритмом Цезаря
+
+Одна из перестановок содержит осмымсленный набор символов похожих на фразу:
+nottoohardhere
+
+зайдём под пользователем flag00
+
+level00@SnowCrash:~$ su flag00
+Password: nottoohardhere
+Don't forget to launch getflag !
+flag00@SnowCrash:~$ getflag
+Check flag.Here is your token : x24ti5gi3x0ol2eh4esiuxias
